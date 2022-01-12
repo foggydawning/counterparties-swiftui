@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject private var counterpartyViewModel: CounterpartyViewModel = .init()
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        VStack{
+            Text("ID: \(counterpartyViewModel.counterparty.id!)")
+        }
     }
 }
 
