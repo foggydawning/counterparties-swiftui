@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    let screenSize: CGSize = UIScreen.main.bounds.size
+    private var screenSize: CGSize { UIScreen.main.bounds.size }
+    
     @State var counterpartyModels: [CounterpartyModel] = []
     @State var isCounterpartySelected: Bool = false
     @State var selectedCounterpartyId: Int = 0
@@ -20,24 +21,17 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             ZStack (alignment: .bottom){
-                VStack {
-                    Spacer(minLength: 10)
+                VStack (spacing: 0) {
+                    Rectangle()
+                        .frame(width: screenSize.width, height: 10)
+                        .foregroundColor(.gray.opacity(0.1))
                     List {
                         ForEach(self.counterpartyModels) { model in
-                            HStack {
-                                
-                                Image(uiImage: UIImage(data: model.imageData!)!)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 40, height: 40)
-                                    .edgesIgnoringSafeArea(.all)
-                                    .clipped()
-                                Spacer().frame(width: 30)
-                                Text(model.name)
-                                Spacer()
-                                Text("\(model.contactPhoneNumber)")
-                                Spacer().frame(width: 30)
-                            }
+                            CounterpartyHStack(
+                                imageData: model.imageData!,
+                                name: model.name,
+                                contactPhoneNumber: model.contactPhoneNumber
+                            )
                             .swipeActions {
                                 EditSwipeButton(
                                     model: model,
@@ -54,6 +48,7 @@ struct ContentView: View {
                             }
                         }
                     }
+                    .background(Color.gray.opacity(0.1))
                     .onAppear(perform: {
                         self.counterpartyModels = DB_Manager().getCounterparties()
                     })
@@ -84,9 +79,28 @@ struct ContentView: View {
         
     }
     
+    private struct CounterpartyHStack: View {
+        
+        let imageData: Data
+        let name: String
+        let contactPhoneNumber: String
+        
+        var body: some View {
+            HStack {
+                smallImage(data: imageData)
+                Spacer().frame(width: 30)
+                Text(name)
+                Spacer()
+                Text(contactPhoneNumber)
+                Spacer().frame(width: 30)
+            }
+        }
+    }
     private struct DeleteSwipeButton: View {
         var model: CounterpartyModel
+        
         @Binding var counterpartyModels: [CounterpartyModel]
+        
         var body: some View {
             Button {
                 let dbManager: DB_Manager = .init()
@@ -102,10 +116,13 @@ struct ContentView: View {
     }
     
     private struct EditSwipeButton: View {
+        
         var model: CounterpartyModel
+        
         @Binding var counterpartyModels: [CounterpartyModel]
         @Binding var isCounterpartySelected: Bool
         @Binding var selectedCounterpartyId: Int
+        
         var body: some View {
             Button {
                 selectedCounterpartyId = model.id
