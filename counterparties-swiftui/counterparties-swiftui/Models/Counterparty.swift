@@ -6,12 +6,8 @@
 //
 
 struct CounterpartyModel: Identifiable {
-    let id: Int?
-    var name: String? = ""
-    var contactPhoneNumber: String? = ""
-    var email: String? = nil
-    
-    static var placeholder: Self {
-        .init(id: nil, name: nil, contactPhoneNumber: nil, email: nil)
-    }
+    public var id: Int = 0
+    public var name: String = ""
+    public var contactPhoneNumber: String = ""
+    public var email: String? = nil
 }

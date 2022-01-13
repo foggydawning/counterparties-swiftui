@@ -59,7 +59,7 @@ class DB_Manager {
         }
     }
     
-    public func addCounterparty(
+    public func addCounterparty (
         nameValue: String,
         emailValue: String,
         contactPhoneNumberValue: String
@@ -70,6 +70,7 @@ class DB_Manager {
                     name <- nameValue,
                     email <- emailValue,
                     contactPhoneNumber <- contactPhoneNumberValue
+                    
                 )
             )
         } catch {
@@ -77,11 +78,41 @@ class DB_Manager {
         }
     }
     
-    public func getUsers() -> [CounterpartyModel] {
+    
+    func getCounterparty(idValue: Int) -> CounterpartyModel {
+        var counterpartyModel: CounterpartyModel = .init(id: 0)
+        do {
+            // get counterparty using ID
+            let counterparty: AnySequence<Row> = try db.prepare(
+                counterpartiesTable.filter(id == idValue)
+            )
+     
+            try counterparty.forEach({ (rowValue) in
+                counterpartyModel.id = try rowValue.get(id)
+                counterpartyModel.name = try rowValue.get(name)
+                counterpartyModel.email = try rowValue.get(email)
+                counterpartyModel.contactPhoneNumber = try rowValue.get(contactPhoneNumber)
+            })
+        } catch {
+            print(error.localizedDescription)
+        }
+        return counterpartyModel
+    }
+    
+    public func deleteCounterparty(idValue: Int) {
+        do {
+            let counterparty: Table = counterpartiesTable.filter(id == idValue)
+            try db.run(counterparty.delete())
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    public func getCounterparties() -> [CounterpartyModel] {
         var counterpartyModels: [CounterpartyModel] = []
      
         // get all users in descending order
-        counterpartiesTable = counterpartiesTable.order(id.desc)
+        counterpartiesTable = counterpartiesTable.order(name.desc)
      
         // exception handling
         do {
@@ -100,5 +131,26 @@ class DB_Manager {
         }
         return counterpartyModels
     }
+    
+//    public func updateUser(
+//        idValue: Int,
+//        nameValue: String,
+//        emailValue: String,
+//        contactPhoneNumberValue: String
+//    ){
+//        do {
+//            // get user using ID
+//            let counterparty: Table = counterpartiesTable.filter(id == idValue)
+//             
+//            // run the update query
+//            try db.run(counterparty.update(
+//                name <- nameValue,
+//                email <- emailValue,
+//                contactPhoneNumber <- contactPhoneNumberValue
+//            ))
+//        } catch {
+//            print(error.localizedDescription)
+//        }
+//    }
 }
 
