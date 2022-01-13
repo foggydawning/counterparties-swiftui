@@ -36,17 +36,13 @@ struct AddCounterpartyView: View {
                             isShowPhotoLibrary = true
                         })
                 )
-            
             Spacer()
-            
             AddEditCounterpartyTextFieldsStackView(
                 name: self.$name,
                 email: self.$email,
                 contactPhoneNumber: self.$contactPhoneNumber
             )
-               
             Spacer()
-            
             Button(
                 action: { buttonAction() },
                 label: { Text("Add").fontWeight(.bold) }
@@ -90,7 +86,6 @@ struct EditCounterpartyView: View {
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
      
     var body: some View {
-         
         VStack {
             Image(uiImage: self.image)
                 .resizable()
@@ -105,7 +100,6 @@ struct EditCounterpartyView: View {
                             isShowPhotoLibrary = true
                         })
                 )
-            
             Spacer()
             AddEditCounterpartyTextFieldsStackView(
                 name: self.$name,
@@ -113,12 +107,10 @@ struct EditCounterpartyView: View {
                 contactPhoneNumber: self.$contactPhoneNumber
             )
             Spacer()
-            
             Button(
                 action: { buttonAction() },
                 label: { Text("Edit").fontWeight(.bold) }
             ).buttonStyleViewModifier()
-            
             Spacer()
         }
         .ignoresSafeArea(edges: [.top])
