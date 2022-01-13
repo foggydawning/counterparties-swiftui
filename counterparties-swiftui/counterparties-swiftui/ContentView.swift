@@ -24,11 +24,14 @@ struct ContentView: View {
                     Spacer(minLength: 10)
                     List {
                         ForEach(self.counterpartyModels) { model in
-                    
                             HStack {
-                                Ellipse()
+                                
+                                Image(uiImage: UIImage(data: model.imageData!)!)
+                                    .resizable()
+                                    .scaledToFill()
                                     .frame(width: 40, height: 40)
-                                    .foregroundColor(.gray)
+                                    .edgesIgnoringSafeArea(.all)
+                                    .clipped()
                                 Spacer().frame(width: 30)
                                 Text(model.name)
                                 Spacer()

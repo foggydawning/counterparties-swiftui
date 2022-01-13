@@ -16,7 +16,8 @@ class DB_Manager {
     private var id: Expression<Int>!
     private var name: Expression<String>!
     private var contactPhoneNumber: Expression<String>!
-    private var email: Expression<String>!
+    private var email: Expression<String?>!
+    private var imageData: Expression<Data?>!
     
     init () {
         // exception handling
@@ -38,6 +39,7 @@ class DB_Manager {
             name = .init("name")
             contactPhoneNumber = .init("contactPhoneNumber")
             email = .init("email")
+            imageData = .init("imageData")
             
             // check if the table is already created
             if (!UserDefaults.standard.bool(forKey: "is_db_created")) {
@@ -48,6 +50,7 @@ class DB_Manager {
                     t.column(name)
                     t.column(email, unique: true)
                     t.column(contactPhoneNumber, unique: true)
+                    t.column(imageData)
                 })
                  
                 // set the value to true, so it will not attempt to create the table again
@@ -61,16 +64,17 @@ class DB_Manager {
     
     public func addCounterparty (
         nameValue: String,
-        emailValue: String,
-        contactPhoneNumberValue: String
+        emailValue: String?,
+        contactPhoneNumberValue: String,
+        imageDataValue: Data?
     ){
         do {
             try db.run(
                 counterpartiesTable.insert(
                     name <- nameValue,
                     email <- emailValue,
-                    contactPhoneNumber <- contactPhoneNumberValue
-                    
+                    contactPhoneNumber <- contactPhoneNumberValue,
+                    imageData <- imageDataValue
                 )
             )
         } catch {
@@ -92,6 +96,7 @@ class DB_Manager {
                 counterpartyModel.name = try rowValue.get(name)
                 counterpartyModel.email = try rowValue.get(email)
                 counterpartyModel.contactPhoneNumber = try rowValue.get(contactPhoneNumber)
+                counterpartyModel.imageData = try rowValue.get(imageData)
             })
         } catch {
             print(error.localizedDescription)
@@ -117,7 +122,8 @@ class DB_Manager {
                     id: counterparty[id],
                     name: counterparty[name],
                     contactPhoneNumber: counterparty[contactPhoneNumber],
-                    email: counterparty[email]
+                    email: counterparty[email],
+                    imageData: counterparty[imageData]
                 )
                 counterpartyModels.append(counterpartyModel)
             }
@@ -127,18 +133,20 @@ class DB_Manager {
         return counterpartyModels
     }
     
-    public func updateUser(
+    public func updateUser (
         idValue: Int,
         nameValue: String,
         emailValue: String,
-        contactPhoneNumberValue: String
+        contactPhoneNumberValue: String,
+        imageDataValue: Data?
     ){
         do {
             let counterparty: Table = counterpartiesTable.filter(id == idValue)
             try db.run(counterparty.update(
                 name <- nameValue,
                 email <- emailValue,
-                contactPhoneNumber <- contactPhoneNumberValue
+                contactPhoneNumber <- contactPhoneNumberValue,
+                imageData <- imageDataValue
             ))
         } catch {
             print(error.localizedDescription)

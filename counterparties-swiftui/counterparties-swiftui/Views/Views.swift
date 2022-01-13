@@ -6,22 +6,38 @@
 //
 
 import SwiftUI
+import UIKit
 
 
 struct AddCounterpartyView: View {
+    
     @State var name: String = ""
     @State var email: String = ""
     @State var contactPhoneNumber: String = ""
+    
+    @State private var isShowPhotoLibrary = false
+    @State private var image = UIImage(named: "CounterpartyDefaultPic")!
+    
      
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
      
     var body: some View {
          
         VStack {
-            Rectangle()
+            Image(uiImage: self.image)
+                .resizable()
+                .scaledToFill()
                 .frame(width: UIScreen.main.bounds.width,
-                       height: UIScreen.main.bounds.height*0.5)
-                .foregroundColor(.gray)
+                       height: UIScreen.main.bounds.width)
+                .clipped()
+                .edgesIgnoringSafeArea(.all)
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged({ _ in
+                            isShowPhotoLibrary = true
+                        })
+                )
+            
             Spacer()
             
             BasicTextField(textString: "Enter name", text: $name)
@@ -43,18 +59,24 @@ struct AddCounterpartyView: View {
             
             Spacer().frame(height: 20)
         }
+        .sheet(isPresented: $isShowPhotoLibrary) {
+            ImagePicker(selectedImage: self.$image, sourceType: .photoLibrary)
+        }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Adding counterparty")
         .navigationBarColor(
             backgroundColor: .clear, titleColor: .white
         )
+        
     }
     
     private func buttonAction() {
+        let imageData: Data? = self.image.pngData()
         DB_Manager().addCounterparty(
             nameValue: self.name,
             emailValue: self.email,
-            contactPhoneNumberValue: self.contactPhoneNumber
+            contactPhoneNumberValue: self.contactPhoneNumber,
+            imageDataValue: imageData
         )
         self.mode.wrappedValue.dismiss()
     }
@@ -65,16 +87,28 @@ struct EditCounterpartyView: View {
     @State var name: String = ""
     @State var email: String = ""
     @State var contactPhoneNumber: String = ""
+    
+    @State private var isShowPhotoLibrary = false
+    @State private var image = UIImage(named: "CounterpartyDefaultPic")!
      
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
      
     var body: some View {
          
         VStack {
-            Rectangle()
+            Image(uiImage: self.image)
+                .resizable()
+                .scaledToFill()
                 .frame(width: UIScreen.main.bounds.width,
-                       height: UIScreen.main.bounds.height*0.5)
-                .foregroundColor(.gray)
+                        height: UIScreen.main.bounds.width)
+                .clipped()
+                .edgesIgnoringSafeArea(.all)
+                .simultaneousGesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged({ _ in
+                                isShowPhotoLibrary = true
+                            })
+                        )
             Spacer()
             
             BasicTextField(textString: "Enter name", text: $name)
@@ -85,7 +119,7 @@ struct EditCounterpartyView: View {
             BasicTextField(
                 textString: "Enter contact phone number",
                 text: $contactPhoneNumber
-            ).keyboardType(.phonePad)
+            ).keyboardType(.namePhonePad)
                
             Spacer()
             
@@ -96,31 +130,30 @@ struct EditCounterpartyView: View {
             
             Spacer().frame(height: 20)
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle("Adding counterparty")
-        .navigationBarColor(
-            backgroundColor: .clear, titleColor: .white
-        )
+        .sheet(isPresented: $isShowPhotoLibrary) {
+            ImagePicker(selectedImage: self.$image, sourceType: .photoLibrary)
+        }
         .onAppear(perform: {
             let counterpartyModel: CounterpartyModel =
                 DB_Manager().getCounterparty(idValue: self.id)
-             
             self.name = counterpartyModel.name
             self.email = counterpartyModel.email ?? ""
             self.contactPhoneNumber = counterpartyModel.contactPhoneNumber
+            self.image = UIImage(data: counterpartyModel.imageData!)!
         })
     }
     
     private func buttonAction() {
+        let imageData: Data? = self.image.pngData()
         DB_Manager().updateUser(
             idValue: self.id,
             nameValue: self.name,
             emailValue: self.email,
-            contactPhoneNumberValue: self.contactPhoneNumber
+            contactPhoneNumberValue: self.contactPhoneNumber,
+            imageDataValue: imageData
         )
 
         // go back to home page
-        self.mode.wrappedValue.dismiss()
         self.mode.wrappedValue.dismiss()
     }
 }
