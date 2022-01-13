@@ -13,7 +13,9 @@ struct ContentView: View {
     var body: some View {
         VStack{
             Text("ID: \(counterpartyViewModel.counterparty.id!)")
-        }
+        }.onAppear(perform: {
+            DB_Manager().getUsers()
+        })
     }
 }
 
