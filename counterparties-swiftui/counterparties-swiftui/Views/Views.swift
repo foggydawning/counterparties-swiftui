@@ -41,14 +41,15 @@ struct AddCounterpartyView: View {
             Spacer()
             
             BasicTextField(textString: "Enter name", text: $name)
-            Spacer().frame(height: 15)
+                .keyboardType(.emailAddress)
+            Spacer().frame(height: 10)
             BasicTextField(textString: "Enter email", text: $email)
                 .keyboardType(.emailAddress)
-            Spacer().frame(height: 15)
+            Spacer().frame(height: 10)
             BasicTextField(
                 textString: "Enter contact phone number",
                 text: $contactPhoneNumber
-            ).keyboardType(.phonePad)
+            ).keyboardType(.emailAddress)
                
             Spacer()
             
@@ -112,14 +113,15 @@ struct EditCounterpartyView: View {
             Spacer()
             
             BasicTextField(textString: "Enter name", text: $name)
-            Spacer().frame(height: 15)
+                .keyboardType(.emailAddress)
+            Spacer().frame(height: 10)
             BasicTextField(textString: "Enter email", text: $email)
                 .keyboardType(.emailAddress)
-            Spacer().frame(height: 15)
+            Spacer().frame(height: 10)
             BasicTextField(
                 textString: "Enter contact phone number",
                 text: $contactPhoneNumber
-            ).keyboardType(.namePhonePad)
+            ).keyboardType(.emailAddress)
                
             Spacer()
             
@@ -128,8 +130,9 @@ struct EditCounterpartyView: View {
                 label: { Text("Edit").fontWeight(.bold) }
             ).buttonStyleViewModifier()
             
-            Spacer().frame(height: 20)
+            Spacer()
         }
+        .ignoresSafeArea(edges: [.top])
         .sheet(isPresented: $isShowPhotoLibrary) {
             ImagePicker(selectedImage: self.$image, sourceType: .photoLibrary)
         }
