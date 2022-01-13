@@ -49,19 +49,9 @@ struct MainView: View {
                         }
                     }
                     .background(Color.gray.opacity(0.1))
-                    .onAppear(perform: {
-                        self.counterpartyModels = DB_Manager().getCounterparties()
-                    })
+                    .onAppear(perform: { updateModels() })
                 }
-                
-                VStack{
-                    NavigationLink (
-                        destination: AddCounterpartyView() ,
-                        label: { Text("Add counterparty") }
-                    ).buttonStyleViewModifier()
-                    
-                    Spacer().frame(height: 20)
-                }
+                AddUserButtonVStuck()
             }
             .navigationBarTitle("Counterparties")
             .navigationBarColor(
@@ -72,11 +62,25 @@ struct MainView: View {
             EditCounterpartyView(
                 id: self.$selectedCounterpartyId
             )
-            .onDisappear(perform: {
-                self.counterpartyModels = DB_Manager().getCounterparties()
-            })
+            .onDisappear(perform: { updateModels() })
         }
         
+    }
+    
+    private func updateModels() {
+        self.counterpartyModels = DB_Manager().getCounterparties()
+    }
+    
+    private struct AddUserButtonVStuck: View {
+        var body: some View {
+            VStack{
+                NavigationLink (
+                    destination: AddCounterpartyView() ,
+                    label: { Text("Add counterparty") }
+                ).buttonStyleViewModifier()
+                Spacer().frame(height: 20)
+            }
+        }
     }
     
     private struct CounterpartyHStack: View {
