@@ -18,7 +18,6 @@ struct AddCounterpartyView: View {
     var body: some View {
          
         VStack {
-            
             Rectangle()
                 .frame(width: UIScreen.main.bounds.width,
                        height: UIScreen.main.bounds.height*0.5)
@@ -39,7 +38,7 @@ struct AddCounterpartyView: View {
             
             Button(
                 action: { buttonAction() },
-                label: { Text("Add counterparty").fontWeight(.bold) }
+                label: { Text("Add").fontWeight(.bold) }
             ).buttonStyleViewModifier()
             
             Spacer().frame(height: 20)
@@ -61,9 +60,67 @@ struct AddCounterpartyView: View {
     }
 }
 
-struct AddCounterpartyView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddCounterpartyView()
+struct EditCounterpartyView: View {
+    @Binding var id: Int
+    @State var name: String = ""
+    @State var email: String = ""
+    @State var contactPhoneNumber: String = ""
+     
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
+     
+    var body: some View {
+         
+        VStack {
+            Rectangle()
+                .frame(width: UIScreen.main.bounds.width,
+                       height: UIScreen.main.bounds.height*0.5)
+                .foregroundColor(.gray)
+            Spacer()
+            
+            BasicTextField(textString: "Enter name", text: $name)
+            Spacer().frame(height: 15)
+            BasicTextField(textString: "Enter email", text: $email)
+                .keyboardType(.emailAddress)
+            Spacer().frame(height: 15)
+            BasicTextField(
+                textString: "Enter contact phone number",
+                text: $contactPhoneNumber
+            ).keyboardType(.phonePad)
+               
+            Spacer()
+            
+            Button(
+                action: { buttonAction() },
+                label: { Text("Edit").fontWeight(.bold) }
+            ).buttonStyleViewModifier()
+            
+            Spacer().frame(height: 20)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Adding counterparty")
+        .navigationBarColor(
+            backgroundColor: .clear, titleColor: .white
+        )
+        .onAppear(perform: {
+            let counterpartyModel: CounterpartyModel =
+                DB_Manager().getCounterparty(idValue: self.id)
+             
+            self.name = counterpartyModel.name
+            self.email = counterpartyModel.email ?? ""
+            self.contactPhoneNumber = counterpartyModel.contactPhoneNumber
+        })
+    }
+    
+    private func buttonAction() {
+        DB_Manager().updateUser(
+            idValue: self.id,
+            nameValue: self.name,
+            emailValue: self.email,
+            contactPhoneNumberValue: self.contactPhoneNumber
+        )
+
+        // go back to home page
+        self.mode.wrappedValue.dismiss()
+        self.mode.wrappedValue.dismiss()
     }
 }
-

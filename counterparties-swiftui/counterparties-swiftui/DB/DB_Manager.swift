@@ -110,13 +110,8 @@ class DB_Manager {
     
     public func getCounterparties() -> [CounterpartyModel] {
         var counterpartyModels: [CounterpartyModel] = []
-     
-        // get all users in descending order
-        counterpartiesTable = counterpartiesTable.order(name.desc)
-     
-        // exception handling
+        counterpartiesTable = counterpartiesTable.order(name.asc)
         do {
-            // loop through all users
             for counterparty in try db.prepare(counterpartiesTable) {
                 let counterpartyModel: CounterpartyModel = .init(
                     id: counterparty[id],
@@ -132,25 +127,22 @@ class DB_Manager {
         return counterpartyModels
     }
     
-//    public func updateUser(
-//        idValue: Int,
-//        nameValue: String,
-//        emailValue: String,
-//        contactPhoneNumberValue: String
-//    ){
-//        do {
-//            // get user using ID
-//            let counterparty: Table = counterpartiesTable.filter(id == idValue)
-//             
-//            // run the update query
-//            try db.run(counterparty.update(
-//                name <- nameValue,
-//                email <- emailValue,
-//                contactPhoneNumber <- contactPhoneNumberValue
-//            ))
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//    }
+    public func updateUser(
+        idValue: Int,
+        nameValue: String,
+        emailValue: String,
+        contactPhoneNumberValue: String
+    ){
+        do {
+            let counterparty: Table = counterpartiesTable.filter(id == idValue)
+            try db.run(counterparty.update(
+                name <- nameValue,
+                email <- emailValue,
+                contactPhoneNumber <- contactPhoneNumberValue
+            ))
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
 }
 

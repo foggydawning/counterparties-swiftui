@@ -10,8 +10,8 @@ import SwiftUI
 struct ContentView: View {
     let screenSize: CGSize = UIScreen.main.bounds.size
     @State var counterpartyModels: [CounterpartyModel] = []
-    
     @State var isCounterpartySelected: Bool = false
+    @State var selectedCounterpartyId: Int = 0
     
     init(){
         UITableView.appearance().backgroundColor = .clear
@@ -39,7 +39,8 @@ struct ContentView: View {
                                 EditSwipeButton(
                                     model: model,
                                     counterpartyModels: self.$counterpartyModels,
-                                    isCounterpartySelected: self.$isCounterpartySelected
+                                    isCounterpartySelected: self.$isCounterpartySelected,
+                                    selectedCounterpartyId: self.$selectedCounterpartyId
                                 )
                             }
                             .swipeActions {
@@ -48,10 +49,6 @@ struct ContentView: View {
                                     counterpartyModels: self.$counterpartyModels
                                 )
                             }
-                            .sheet(isPresented: self.$isCounterpartySelected) {
-                                EmptyView()
-                            }
-                            
                         }
                     }
                     .onAppear(perform: {
@@ -72,6 +69,14 @@ struct ContentView: View {
             .navigationBarColor(
                 backgroundColor: .black, titleColor: .white
             )
+        }
+        .sheet(isPresented: self.$isCounterpartySelected) {
+            EditCounterpartyView(
+                id: self.$selectedCounterpartyId
+            )
+            .onDisappear(perform: {
+                self.counterpartyModels = DB_Manager().getCounterparties()
+            })
         }
         
     }
@@ -97,8 +102,10 @@ struct ContentView: View {
         var model: CounterpartyModel
         @Binding var counterpartyModels: [CounterpartyModel]
         @Binding var isCounterpartySelected: Bool
+        @Binding var selectedCounterpartyId: Int
         var body: some View {
             Button {
+                selectedCounterpartyId = model.id
                 isCounterpartySelected.toggle()
             } label: {
                 Label(
