@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct MainView: View {
     private var screenSize: CGSize { UIScreen.main.bounds.size }
     
     @State var counterpartyModels: [CounterpartyModel] = []
@@ -137,12 +137,5 @@ struct ContentView: View {
             }
         }
 
-    }
-}
-
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }
