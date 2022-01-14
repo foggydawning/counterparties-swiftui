@@ -81,13 +81,17 @@ struct BasicTextField: View {
     
     var body: some View {
         TextField(textString, text: $text)
-            .multilineTextAlignment(.center)
-            .padding(15)
-            .background(Color(.systemGray6))
-            .cornerRadius(20)
-            .accentColor(.black)
-            .lineLimit(1)
             .disableAutocorrection(true)
+            .multilineTextAlignment(.center)
+            .accentColor(.black)
+            .foregroundColor(.gray)
+            .lineLimit(1)
+            .padding(15)
+            .background(Color.white)
+            .cornerRadius(20)
+            .padding(3)
+            .background(Color.black)
+            .cornerRadius(23)
             .padding([.leading, .trailing])   
     }
 }

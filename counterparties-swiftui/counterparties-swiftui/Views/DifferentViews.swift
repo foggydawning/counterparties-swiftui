@@ -11,6 +11,8 @@ import UIKit
 
 struct AddCounterpartyView: View {
     
+    private var screenSize: CGSize { UIScreen.main.bounds.size }
+    
     @State var name: String = ""
     @State var email: String = ""
     @State var contactPhoneNumber: String = ""
@@ -21,15 +23,14 @@ struct AddCounterpartyView: View {
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
      
     var body: some View {
-         
-        VStack {
+        ScrollView{
             Image(uiImage: self.image)
                 .resizable()
                 .scaledToFill()
                 .frame(width: UIScreen.main.bounds.width,
                        height: UIScreen.main.bounds.width)
                 .clipped()
-                .edgesIgnoringSafeArea(.all)
+                
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged({ _ in
@@ -37,21 +38,27 @@ struct AddCounterpartyView: View {
                         })
                 )
             Spacer()
-            AddEditCounterpartyTextFieldsStackView(
-                name: self.$name,
-                email: self.$email,
-                contactPhoneNumber: self.$contactPhoneNumber
-            )
+            HStack{
+                Spacer().frame(width: 15)
+                AddEditCounterpartyTextFieldsStackView(
+                    name: self.$name,
+                    email: self.$email,
+                    contactPhoneNumber: self.$contactPhoneNumber
+                )
+                Spacer().frame(width: 15)
+            }
             Spacer()
             Button(
                 action: { buttonAction() },
                 label: { Text("Add").fontWeight(.bold) }
-            ).buttonStyleViewModifier()
-            
-            Spacer().frame(height: 20)
+            )
+                .buttonStyleViewModifier()
         }
         .sheet(isPresented: $isShowPhotoLibrary) {
-            ImagePicker(selectedImage: self.$image, sourceType: .photoLibrary)
+            ImagePicker(
+                selectedImage: self.$image,
+                sourceType: .photoLibrary
+            )
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Adding counterparty")
@@ -86,7 +93,7 @@ struct EditCounterpartyView: View {
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
      
     var body: some View {
-        VStack {
+        ScrollView {
             Image(uiImage: self.image)
                 .resizable()
                 .scaledToFill()
@@ -101,19 +108,22 @@ struct EditCounterpartyView: View {
                         })
                 )
             Spacer()
-            AddEditCounterpartyTextFieldsStackView(
-                name: self.$name,
-                email: self.$email,
-                contactPhoneNumber: self.$contactPhoneNumber
-            )
+            HStack{
+                Spacer().frame(width: 15)
+                AddEditCounterpartyTextFieldsStackView(
+                    name: self.$name,
+                    email: self.$email,
+                    contactPhoneNumber: self.$contactPhoneNumber
+                )
+                Spacer().frame(width: 15)
+            }
             Spacer()
             Button(
                 action: { buttonAction() },
                 label: { Text("Edit").fontWeight(.bold) }
-            ).buttonStyleViewModifier()
-            Spacer()
+            )
+                .buttonStyleViewModifier()
         }
-        .ignoresSafeArea(edges: [.top])
         .sheet(isPresented: $isShowPhotoLibrary) {
             ImagePicker(selectedImage: self.$image, sourceType: .photoLibrary)
         }
@@ -148,16 +158,20 @@ struct AddEditCounterpartyTextFieldsStackView: View {
     @Binding var contactPhoneNumber: String
     
     var body: some View {
-        BasicTextField(textString: "Enter name", text: $name)
-            .keyboardType(.emailAddress)
-        Spacer().frame(height: 10)
-        BasicTextField(textString: "Enter email", text: $email)
-            .keyboardType(.emailAddress)
-        Spacer().frame(height: 10)
-        BasicTextField(
-            textString: "Enter contact phone number",
-            text: $contactPhoneNumber
-        ).keyboardType(.emailAddress)
+        VStack{
+            BasicTextField(textString: "Enter name", text: $name)
+                .keyboardType(.alphabet)
+            Spacer().frame(height: 10)
+            BasicTextField(textString: "Enter email", text: $email)
+                .keyboardType(.emailAddress)
+            Spacer().frame(height: 10)
+            BasicTextField(
+                textString: "Enter contact phone number",
+                text: $contactPhoneNumber
+            )
+                .keyboardType(.numbersAndPunctuation)
+        }
+        
     }
 }
 
